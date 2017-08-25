@@ -3120,6 +3120,18 @@ static void EsOutUpdateInfo( es_out_t *out, es_out_id_t *es, const es_format_t *
                info_category_AddInfo( p_cat, _("Frame rate"), "%"PRId64,
                                       div.quot );
        }
+
+       if (fmt->video.i_field_order != FIELD_ORDER_UNKNOWN) {
+           const char *field_order;
+           if (fmt->video.i_field_order == FIELD_ORDER_PROGRESSIVE)
+               field_order = "Progressive";
+           else if (fmt->video.i_field_order == FIELD_ORDER_INTERLACED)
+               field_order = "Interlaced";
+           else
+               field_order = "Unknown";
+           info_category_AddInfo( p_cat, _("Field Order"), "%s", field_order);
+       }
+
        if( fmt->i_codec != p_fmt_es->i_codec )
        {
            const char *psz_chroma_description =

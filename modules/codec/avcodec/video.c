@@ -327,6 +327,7 @@ static int lavc_UpdateVideoFormat(decoder_t *dec, AVCodecContext *ctx,
     dec->fmt_out.video.projection_mode = dec->fmt_in.video.projection_mode;
     dec->fmt_out.video.multiview_mode = dec->fmt_in.video.multiview_mode;
     dec->fmt_out.video.pose = dec->fmt_in.video.pose;
+    dec->fmt_out.video.i_field_order = dec->fmt_in.video.i_field_order;
     if ( dec->fmt_in.video.mastering.max_luminance )
         dec->fmt_out.video.mastering = dec->fmt_in.video.mastering;
     dec->fmt_out.video.lighting = dec->fmt_in.video.lighting;
@@ -580,6 +581,7 @@ int InitVideoDec( vlc_object_t *obj )
     p_dec->fmt_out.i_codec = p_dec->fmt_out.video.i_chroma;
 
     p_dec->fmt_out.video.orientation = p_dec->fmt_in.video.orientation;
+    p_dec->fmt_out.video.i_field_order = p_dec->fmt_in.video.i_field_order;
 
     if( p_dec->fmt_in.video.p_palette ) {
         p_sys->palette_sent = false;

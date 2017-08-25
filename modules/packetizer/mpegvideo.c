@@ -701,9 +701,15 @@ static block_t *ParseMPEGBlock( decoder_t *p_dec, block_t *p_frag )
         p_dec->fmt_out.video.i_visible_height =
             ( (p_frag->p_buffer[5]&0x0f) << 8 )|p_frag->p_buffer[6];
         if( p_sys->b_seq_progressive )
+        {
             p_dec->fmt_out.video.i_height = (p_dec->fmt_out.video.i_visible_height + 0x0F) & ~0x0F;
+            p_dec->fmt_out.video.i_field_order = FIELD_ORDER_PROGRESSIVE;
+        }
         else
+        {
             p_dec->fmt_out.video.i_height = (p_dec->fmt_out.video.i_visible_height + 0x1F) & ~0x1F;
+            p_dec->fmt_out.video.i_field_order = FIELD_ORDER_INTERLACED;
+        }
         p_sys->i_aspect_ratio_info = p_frag->p_buffer[7] >> 4;
 
         /* TODO: MPEG1 aspect ratio */
@@ -787,6 +793,10 @@ static block_t *ParseMPEGBlock( decoder_t *p_dec, block_t *p_frag )
             p_sys->i_top_field_first   = p_frag->p_buffer[7] >> 7;
             p_sys->i_repeat_first_field= (p_frag->p_buffer[7]>>1)&0x01;
             p_sys->i_progressive_frame = p_frag->p_buffer[8] >> 7;
+            if (p_sys->i_progressive_frame)
+                p_dec->fmt_out.video.i_field_order = FIELD_ORDER_PROGRESSIVE;
+            else
+                p_dec->fmt_out.video.i_field_order = FIELD_ORDER_INTERLACED;
         }
         else if( extid == SEQUENCE_DISPLAY_EXTENSION_ID && p_frag->i_buffer > 8 )
         {

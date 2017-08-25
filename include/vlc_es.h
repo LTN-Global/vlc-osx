@@ -316,6 +316,16 @@ typedef enum video_chroma_location_t
 } video_chroma_location_t;
 
 /**
+ * Video chroma location
+ */
+typedef enum video_field_order_t
+{
+    FIELD_ORDER_UNKNOWN,
+    FIELD_ORDER_PROGRESSIVE,
+    FIELD_ORDER_INTERLACED,
+} video_field_order_t;
+
+/**
  * video format description
  */
 struct video_format_t
@@ -336,6 +346,7 @@ struct video_format_t
 
     unsigned int i_frame_rate;                     /**< frame rate numerator */
     unsigned int i_frame_rate_base;              /**< frame rate denominator */
+    video_field_order_t i_field_order;
 
     uint32_t i_rmask, i_gmask, i_bmask;      /**< color masks for RGB chroma */
     int i_rrshift, i_lrshift;

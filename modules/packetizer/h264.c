@@ -901,6 +901,11 @@ static block_t *OutputPicture( decoder_t *p_dec )
         }
     }
 
+    if (p_sys->slice.i_field_pic_flag == 0)
+        p_dec->fmt_out.video.i_field_order = FIELD_ORDER_PROGRESSIVE;
+    else
+        p_dec->fmt_out.video.i_field_order = FIELD_ORDER_INTERLACED;
+
 #if 0
     msg_Err(p_dec, "F/BOC %d/%d POC %d %d rec %d flags %x ref%d fn %d fp %d %d pts %ld len %ld",
                     tFOC, bFOC, PictureOrderCount,
