@@ -41,7 +41,7 @@ endif
 	cp -r $(srcdir)/share/hrtfs $@/Contents/MacOS/share/
 	## Copy some other stuff (?)
 	mkdir -p $@/Contents/MacOS/include/
-	(cd "$(prefix)/include" && $(AMTAR) -c --exclude "plugins" vlc) | $(AMTAR) -x -C $@/Contents/MacOS/include/
+	(cd "$(prefix)/include" && $(AMTAR) -c --exclude "plugins" $(PKGDIR)) | $(AMTAR) -x -C $@/Contents/MacOS/include/
 	## Copy translations
 	cat $(top_srcdir)/po/LINGUAS | while read i; do \
 	  $(INSTALL) -d $@/Contents/MacOS/share/locale/$${i}/LC_MESSAGES ; \
