@@ -10,9 +10,11 @@ pseudo-bundle:
 	$(LN_S) -hf $(CONTRIB_DIR)/Frameworks
 	cd $(top_builddir)/bin/Contents/Resources/ && find $(abs_top_srcdir)/modules/gui/macosx/Resources/ -type f -exec $(LN_S) -f {} \;
 
+APPNAME=VLC.app
+
 # VLC.app for packaging and giving it to your friends
 # use package-macosx to get a nice dmg
-VLC.app: install
+$(APPNAME): install
 	rm -Rf $@
 	## Copy Contents
 	cp -R $(prefix)/share/macosx/ $@
@@ -63,18 +65,18 @@ endif
 	find $@ -type f -exec chmod ugo+r '{}' \;
 
 
-package-macosx: VLC.app
+package-macosx: $(APPNAME)
 	rm -f "$(top_builddir)/$(PACKAGE)-$(VERSION).dmg"
 if HAVE_DMGBUILD
 	@echo "Packaging fancy DMG using dmgbuild"
 	cd "$(top_srcdir)/extras/package/macosx/dmg" && dmgbuild -s "dmg_settings.py" \
-		-D app="$(abs_top_builddir)/VLC.app" "VLC Media Player" "$(abs_top_builddir)/$(PACKAGE)-$(VERSION).dmg"
+		-D app="$(abs_top_builddir)/$(APPNAME)" "VLC Media Player" "$(abs_top_builddir)/$(PACKAGE)-$(VERSION).dmg"
 else !HAVE_DMGBUILD
 	@echo "Packaging non-fancy DMG"
 	## Create directory for DMG contents
 	mkdir -p "$(top_builddir)/$(PACKAGE)-$(VERSION)"
 	## Copy contents
-	cp -R "$(top_builddir)/VLC.app" "$(top_builddir)/$(PACKAGE)-$(VERSION)/VLC.app"
+	cp -R "$(top_builddir)/$(APPNAME)" "$(top_builddir)/$(PACKAGE)-$(VERSION)/$(APPNAME)"
 	## Symlink to Applications so users can easily drag-and-drop the App to it
 	$(LN_S) -f /Applications "$(top_builddir)/$(PACKAGE)-$(VERSION)/"
 	## Create DMG
@@ -84,10 +86,10 @@ else !HAVE_DMGBUILD
 	rm -rf "$(top_builddir)/$(PACKAGE)-$(VERSION)"
 endif
 
-package-macosx-zip: VLC.app
+package-macosx-zip: $(APPNAME)
 	rm -f "$(top_builddir)/$(PACKAGE)-$(VERSION).zip"
 	mkdir -p $(top_builddir)/$(PACKAGE)-$(VERSION)/Goodies/
-	cp -R $(top_builddir)/VLC.app $(top_builddir)/vlc-$(VERSION)/VLC.app
+	cp -R $(top_builddir)/$(APPNAME) $(top_builddir)/vlc-$(VERSION)/$(APPNAME)
 	cd $(srcdir); cp -R AUTHORS COPYING README THANKS NEWS $(abs_top_builddir)/$(PACKAGE)-$(VERSION)/Goodies/
 	zip -r -y -9 $(top_builddir)/vlc-$(VERSION).zip $(top_builddir)/$(PACKAGE)-$(VERSION)
 	rm -rf "$(top_builddir)/$(PACKAGE)-$(VERSION)"
