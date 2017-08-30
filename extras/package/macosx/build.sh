@@ -226,5 +226,5 @@ fi
 info "Running make -j$JOBS"
 make -j$JOBS
 
-info "Preparing VLC.app"
-make VLC.app
+info "Preparing LTN-VLC.app"
+make LTN-VLC.app

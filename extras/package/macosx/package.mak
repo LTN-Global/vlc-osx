@@ -10,7 +10,7 @@ pseudo-bundle:
 	$(LN_S) -hf $(CONTRIB_DIR)/Frameworks
 	cd $(top_builddir)/bin/Contents/Resources/ && find $(abs_top_srcdir)/modules/gui/macosx/Resources/ -type f -exec $(LN_S) -f {} \;
 
-APPNAME=VLC.app
+APPNAME=LTN-VLC.app
 
 # VLC.app for packaging and giving it to your friends
 # use package-macosx to get a nice dmg
