@@ -33,7 +33,7 @@ endif
 	mkdir -p $@/Contents/MacOS/share/locale/
 if BUILD_LUA
 	## Copy lua scripts
-	cp -r "$(prefix)/share/vlc/lua" $@/Contents/MacOS/share/
+	cp -r "$(prefix)/share/$(PKGDIR)/lua" $@/Contents/MacOS/share/
 endif
 	## HRTFs
 	cp -r $(srcdir)/share/hrtfs $@/Contents/MacOS/share/
@@ -54,7 +54,7 @@ endif
 	find $(prefix)/lib -name 'libvlc*.dylib' -maxdepth 1 -exec cp -a {} $@/Contents/MacOS/lib \;
 	## Copy plugins
 	mkdir -p $@/Contents/MacOS/plugins
-	find $(prefix)/lib/vlc/plugins -name 'lib*_plugin.dylib' -maxdepth 2 -exec cp -a {} $@/Contents/MacOS/plugins \;
+	find $(prefix)/lib/$(PKGDIR)/plugins -name 'lib*_plugin.dylib' -maxdepth 2 -exec cp -a {} $@/Contents/MacOS/plugins \;
 	## Install binary
 	cp $(prefix)/bin/vlc $@/Contents/MacOS/VLC
 	## Generate plugin cache
@@ -64,33 +64,33 @@ endif
 
 
 package-macosx: VLC.app
-	rm -f "$(top_builddir)/vlc-$(VERSION).dmg"
+	rm -f "$(top_builddir)/$(PACKAGE)-$(VERSION).dmg"
 if HAVE_DMGBUILD
 	@echo "Packaging fancy DMG using dmgbuild"
 	cd "$(top_srcdir)/extras/package/macosx/dmg" && dmgbuild -s "dmg_settings.py" \
-		-D app="$(abs_top_builddir)/VLC.app" "VLC Media Player" "$(abs_top_builddir)/vlc-$(VERSION).dmg"
+		-D app="$(abs_top_builddir)/VLC.app" "VLC Media Player" "$(abs_top_builddir)/$(PACKAGE)-$(VERSION).dmg"
 else !HAVE_DMGBUILD
 	@echo "Packaging non-fancy DMG"
 	## Create directory for DMG contents
-	mkdir -p "$(top_builddir)/vlc-$(VERSION)"
+	mkdir -p "$(top_builddir)/$(PACKAGE)-$(VERSION)"
 	## Copy contents
-	cp -R "$(top_builddir)/VLC.app" "$(top_builddir)/vlc-$(VERSION)/VLC.app"
+	cp -R "$(top_builddir)/VLC.app" "$(top_builddir)/$(PACKAGE)-$(VERSION)/VLC.app"
 	## Symlink to Applications so users can easily drag-and-drop the App to it
-	$(LN_S) -f /Applications "$(top_builddir)/vlc-$(VERSION)/"
+	$(LN_S) -f /Applications "$(top_builddir)/$(PACKAGE)-$(VERSION)/"
 	## Create DMG
-	hdiutil create -srcfolder "$(top_builddir)/vlc-$(VERSION)" -volname "VLC Media Player" \
-		-format UDBZ -o "$(top_builddir)/vlc-$(VERSION).dmg"
+	hdiutil create -srcfolder "$(top_builddir)/$(PACKAGE)-$(VERSION)" -volname "VLC Media Player" \
+		-format UDBZ -o "$(top_builddir)/$(PACKAGE)-$(VERSION).dmg"
 	## Cleanup
-	rm -rf "$(top_builddir)/vlc-$(VERSION)"
+	rm -rf "$(top_builddir)/$(PACKAGE)-$(VERSION)"
 endif
 
 package-macosx-zip: VLC.app
-	rm -f "$(top_builddir)/vlc-$(VERSION).zip"
-	mkdir -p $(top_builddir)/vlc-$(VERSION)/Goodies/
+	rm -f "$(top_builddir)/$(PACKAGE)-$(VERSION).zip"
+	mkdir -p $(top_builddir)/$(PACKAGE)-$(VERSION)/Goodies/
 	cp -R $(top_builddir)/VLC.app $(top_builddir)/vlc-$(VERSION)/VLC.app
-	cd $(srcdir); cp -R AUTHORS COPYING README THANKS NEWS $(abs_top_builddir)/vlc-$(VERSION)/Goodies/
-	zip -r -y -9 $(top_builddir)/vlc-$(VERSION).zip $(top_builddir)/vlc-$(VERSION)
-	rm -rf "$(top_builddir)/vlc-$(VERSION)"
+	cd $(srcdir); cp -R AUTHORS COPYING README THANKS NEWS $(abs_top_builddir)/$(PACKAGE)-$(VERSION)/Goodies/
+	zip -r -y -9 $(top_builddir)/vlc-$(VERSION).zip $(top_builddir)/$(PACKAGE)-$(VERSION)
+	rm -rf "$(top_builddir)/$(PACKAGE)-$(VERSION)"
 
 package-translations:
 	mkdir -p "$(srcdir)/vlc-translations-$(VERSION)"
