@@ -29,13 +29,11 @@
 #include <vlc_common.h>
 #include <vlc_plugin.h>
 #include <vlc_demux.h>
+#include <vlc_decklink.h>
 
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
-
-#include <DeckLinkAPI.h>
-#include <DeckLinkAPIDispatch.cpp>
 
 #include "sdi.h"
 
@@ -255,9 +253,14 @@ public:
         if( !(events & bmdVideoInputDisplayModeChanged ))
             return S_OK;
 
+	DECKLINK_STR tmp_name;
         const char *mode_name;
-        if (mode->GetName(&mode_name) != S_OK)
+        if (mode->GetName(&tmp_name) != S_OK) {
             mode_name = "unknown";
+	} else {
+	    mode_name = DECKLINK_STRDUP(tmp_name);
+	    DECKLINK_STRDUP(tmp_name);
+	}
 
         msg_Dbg(demux_, "Video input format changed to %s", mode_name);
         if (!sys->autodetect) {
@@ -524,9 +527,14 @@ static int Open(vlc_object_t *p_this)
         }
     }
 
+    DECKLINK_STR tmp_name;
     const char *model_name;
-    if (sys->card->GetModelName(&model_name) != S_OK)
+    if (sys->card->GetModelName(&tmp_name) != S_OK) {
         model_name = "unknown";
+    } else {
+        model_name = DECKLINK_STRDUP(tmp_name);
+	DECKLINK_FREE(tmp_name);
+    }
 
     msg_Dbg(demux, "Opened DeckLink PCI card %d (%s)", card_index, model_name);
 
@@ -605,9 +613,12 @@ static int Open(vlc_object_t *p_this)
         uint32_t field_flags;
         const char *field = GetFieldDominance(m->GetFieldDominance(), &field_flags);
         BMDDisplayMode id = ntohl(m->GetDisplayMode());
+	DECKLINK_STR tmp_name;
 
-        if (m->GetName(&mode_name) != S_OK)
+        if (m->GetName(&tmp_name) != S_OK)
             mode_name = "unknown";
+	mode_name = DECKLINK_STRDUP(tmp_name);
+	DECKLINK_FREE(tmp_name);
         if (m->GetFrameRate(&frame_duration, &time_scale) != S_OK) {
             time_scale = 0;
             frame_duration = 1;

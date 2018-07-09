@@ -43,12 +43,10 @@
 #include <vlc_block.h>
 #include <vlc_image.h>
 #include <vlc_aout.h>
+#include <vlc_decklink.h>
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
-
-#include <DeckLinkAPI.h>
-#include <DeckLinkAPIDispatch.cpp>
 
 #define FRAME_SIZE 1920
 #define CHANNELS_MAX 6
@@ -488,10 +486,14 @@ static IDeckLinkDisplayMode * MatchDisplayMode(vout_display_t *vd,
                 BMDTimeScale timescale;
                 const char *psz_mode_name;
 
+		DECKLINK_STR tmp_name;
                 if(p_mode->GetFrameRate(&frameduration, &timescale) == S_OK &&
-                        p_mode->GetName(&psz_mode_name) == S_OK)
+                        p_mode->GetName(&tmp_name) == S_OK)
                 {
                     BMDDisplayMode modenl = htonl(mode_id);
+		    psz_mode_name = DECKLINK_STRDUP(tmp_name);
+		    DECKLINK_FREE(tmp_name);
+
                     if(i==0)
                     {
                         BMDFieldDominance field = htonl(p_mode->GetFieldDominance());
@@ -616,9 +618,12 @@ static int OpenDecklink(vout_display_t *vd, decklink_sys_t *sys)
         CHECK("Card not found");
     }
 
+    DECKLINK_STR tmp_name;
     const char *psz_model_name;
-    result = p_card->GetModelName(&psz_model_name);
+    result = p_card->GetModelName(&tmp_name);
     CHECK("Unknown model name");
+    psz_model_name = DECKLINK_STRDUP(tmp_name);
+    DECKLINK_FREE(tmp_name);
 
     msg_Dbg(vd, "Opened DeckLink PCI card %s", psz_model_name);
 
