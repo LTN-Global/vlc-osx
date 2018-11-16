@@ -199,7 +199,7 @@ static const char *GetFieldDominance(BMDFieldDominance dom, uint32_t *flags)
     switch(dom)
     {
         case bmdProgressiveFrame:
-            return "";
+            return ", progressive";
         case bmdProgressiveSegmentedFrame:
             return ", segmented";
         case bmdLowerFieldFirst:
